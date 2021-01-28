@@ -1,8 +1,7 @@
 //REQUIRE DEPENDENCIES
 const mysql = require("mysql");
 const inquirer = require("inquirer");
-const { registerPrompt } = require("inquirer");
-const consoleTable = require("console.table");
+const consoleTable = require('console.table')({force: true});
 
 //SET DATABASE TO BE USED, CREDENTIALS NEEDED, AND HOST/PORT
 const dbConnection = mysql.createConnection({
@@ -112,15 +111,14 @@ function addEmployee() {
         const roleID = res.roleID;
         const managerID = res.managerID;
         dbConnection.query(
-            `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUE ("${firstName}", "${lastName}", "${roleID}", "${managerID}")`
-        ), 
+            `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUE ("${firstName}", "${lastName}", "${roleID}", "${managerID}")`, 
         function (err, res) {
             console.log(err);
             if (err) throw err;
             console.log("Employee added, returning home.");
             console.table(res);
             queryUser();
-        }
+        });
     });
 }
 
@@ -149,14 +147,13 @@ function addRole() {
         const salary = res.salary;
         const departmentID = res.departmentID;
         dbConnection.query(
-            `INSERT INTO role (title, salary, department_id) VALUE ("${role}", "${salary}", "${departmentID}")`
-        ), 
+            `INSERT INTO role (title, salary, department_id) VALUE ("${role}", "${salary}", "${departmentID}")`, 
         function (err, res) {
             if (err) throw err;
             console.log("Role added, returning home.");
             console.table(res);
             queryUser();
-        }
+        });
     });
 }
 
@@ -173,14 +170,13 @@ function addDepartment() {
         //SET EACH USER RESPONSE TO MORE READABLE CONST
         const department = res.department;
         dbConnection.query(
-            `INSERT INTO department (name) VALUE ("${department}")`
-        ), 
+            `INSERT INTO department (name) VALUE ("${department}")`, 
         function (err, res) {
             if (err) throw err;
             console.log("Department added, returning home.");
             console.table(res);
             queryUser();
-        }
+        });
     });
 }
 
@@ -202,15 +198,14 @@ function rmEmployee() {
         const firstName = res.firstName;
         const lastName = res.lastName;
         dbConnection.query(
-            `DELETE FROM employee WHERE first_name = "${firstName}" AND last_name = "${lastName}"`
-        ), 
+            `DELETE FROM employee WHERE first_name = "${firstName}" AND last_name = "${lastName}"`, 
         function (err, res) {
             if (err) throw err;
             console.log("Employee removed, returning hone.");
             console.table(res);
             queryUser();
-        }
-    })
+        });
+    });
 }
 
 function rmRole() {
@@ -225,15 +220,14 @@ function rmRole() {
         if (err) throw err;
         const role = res.role;
         dbConnection.query(
-            `DELETE FROM role WHERE title = "${role}"`
-        ), 
+            `DELETE FROM role WHERE title = "${role}"`, 
         function (err, res) {
             if (err) throw err;
             console.log("Role removed, returning hone.");
             console.table(res);
             queryUser();
-        }
-    })
+        });
+    });
 }
 
 function rmDepartment() {
@@ -248,14 +242,13 @@ function rmDepartment() {
         if (err) throw err;
         const department = res.department;
         dbConnection.query(
-            `DELETE FROM department WHERE name = "${department}"`
-        ), 
+            `DELETE FROM department WHERE name = "${department}"`, 
         function (err, res) {
             if (err) throw err;
             console.log("Department removed, returning home.");
             console.table(res);
             queryUser();
-        }
+        });
     })
 }
 
@@ -268,7 +261,7 @@ function allEmployees() {
             console.table([res]);
             queryUser;
         }
-    )
+    );
 }
 
 function allRoleEmployees() {
@@ -290,7 +283,7 @@ function allRoleEmployees() {
                 console.table(res);
                 queryUser();
             }
-        )
+        );
     });
 }
 
@@ -316,13 +309,13 @@ function setEmployeeRole() {
         if (err) throw err;
         const firstName = res.firstName;
         const lastName = res.lastName;
-        const roleID = res.role;
+        const roleID = res.roleID;
         dbConnection.query(
-            `UPDATE employee SET role_id = "${roleID}" WHERE first_name = "${firstName}" AND last_name = "${lastName}"`
-        ), function (err, res) {
+            `UPDATE employee SET role_id = "${roleID}" WHERE first_name = "${firstName}" AND last_name = "${lastName}"`, 
+            function (err, res) {
             if (err) throw err;
-            console.table([res]);
+            console.table(res);
             queryUser();
-        }
+        });
     });
 }
