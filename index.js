@@ -1,21 +1,20 @@
 //REQUIRE DEPENDENCIES
-const mysql = require("mysql");
+var mysql = require("mysql");
 const inquirer = require("inquirer");
-const consoleTable = require('console.table')({force: true});
+const consoleTable = require('console.table');
 
 //SET DATABASE TO BE USED, CREDENTIALS NEEDED, AND HOST/PORT
 const dbConnection = mysql.createConnection({
     host: "localhost",
     port: "3306",
     user: "root",
-    password: "hv6xr5ek",
+    password: "",
     database: "employees_DB"
 });
 
 //WHEN CONNECTED, RUN queryUser();
-dbConnection.connect(function (err, res) {
+dbConnection.connect(function(err) {
     if (err) throw err;
-    console.table(res);
     queryUser();
 });
 
@@ -115,8 +114,7 @@ function addEmployee() {
         function (err, res) {
             console.log(err);
             if (err) throw err;
-            console.log("Employee added, returning home.");
-            console.table(res);
+            console.log("Employee added, returning home.")
             queryUser();
         });
     });
@@ -150,8 +148,7 @@ function addRole() {
             `INSERT INTO role (title, salary, department_id) VALUE ("${role}", "${salary}", "${departmentID}")`, 
         function (err, res) {
             if (err) throw err;
-            console.log("Role added, returning home.");
-            console.table(res);
+            console.log("Role added, returning home.")
             queryUser();
         });
     });
@@ -173,8 +170,7 @@ function addDepartment() {
             `INSERT INTO department (name) VALUE ("${department}")`, 
         function (err, res) {
             if (err) throw err;
-            console.log("Department added, returning home.");
-            console.table(res);
+            console.log("Department added, returning home.")
             queryUser();
         });
     });
@@ -201,8 +197,7 @@ function rmEmployee() {
             `DELETE FROM employee WHERE first_name = "${firstName}" AND last_name = "${lastName}"`, 
         function (err, res) {
             if (err) throw err;
-            console.log("Employee removed, returning hone.");
-            console.table(res);
+            console.log("Employee removed, returning hone.")
             queryUser();
         });
     });
@@ -223,8 +218,7 @@ function rmRole() {
             `DELETE FROM role WHERE title = "${role}"`, 
         function (err, res) {
             if (err) throw err;
-            console.log("Role removed, returning hone.");
-            console.table(res);
+            console.log("Role removed, returning hone.")
             queryUser();
         });
     });
@@ -245,8 +239,7 @@ function rmDepartment() {
             `DELETE FROM department WHERE name = "${department}"`, 
         function (err, res) {
             if (err) throw err;
-            console.log("Department removed, returning home.");
-            console.table(res);
+            console.log("Department removed, returning home.")
             queryUser();
         });
     })
@@ -254,37 +247,13 @@ function rmDepartment() {
 
 function allEmployees() {
     //GET ALL EMPLOYEES AND DISPLAY WITH CONSOLE TABLE TO FORMAT
-    dbConnection.query(
-        `SELECT * FROM employee`,
+    dbConnection.query(`SELECT * FROM employee`,
         function(res, err) {
-            if (err) throw err;
+            if (err) throw (err);
             console.table([res]);
-            queryUser;
+            queryUser();
         }
     );
-}
-
-function allRoleEmployees() {
-    //GET ALL EMPLOYEES FROM REQUESTED ROLE AND DISPLAY WITH CONSOLE TABLE TO FORMAT
-    inquirer.prompt([
-        {
-            name: "role",
-            type: "input",
-            message: "Enter role name"
-        }
-    ])
-    .then(function(res, err) {
-        if (err) throw err
-        const role = res.role;
-        dbConnection.query(
-            `SELECT * FROM role WHERE title = "${role}"`,
-            function(res, err) {
-                if (err) throw err;
-                console.table(res);
-                queryUser();
-            }
-        );
-    });
 }
 
 function setEmployeeRole() {
@@ -314,7 +283,7 @@ function setEmployeeRole() {
             `UPDATE employee SET role_id = "${roleID}" WHERE first_name = "${firstName}" AND last_name = "${lastName}"`, 
             function (err, res) {
             if (err) throw err;
-            console.table(res);
+            consoleTable.table(res);
             queryUser();
         });
     });
