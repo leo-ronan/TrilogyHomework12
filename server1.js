@@ -282,15 +282,134 @@ function addDepartment() {
 }
 
 function rmEmployee() {
+    inquirer.prompt([
+        {
+            name: "firstName",
+            type: "input",
+            message: "Enter employee-to-be-removed's first name"
+        },
+        {
+            name: "lastName",
+            type: "input",
+            message: "Enter employee-to-be-removed's last name"
+        }
+        .then(function(res) {
+            const firstName = res.firstName;
+            const lastName = res.lastName;
+            var problems = [];
 
+            //TEST RESPONSE VALIDITY
+            var validInfo = true;
+            if (firstName !== "" || typeof(firstName) !== "string") {
+                validInfo = false;
+                problems.push(firstName);
+            }
+            if (lastName !== "" || typeof(lastName) !== "string") {
+                validInfo = false;
+                problems.push(lastName);
+            }
+            
+            //ALERT USER OF ANY INVALID INPUTS AND LOG WHICH INPUTS FAILED VALIDITY TEST
+            if (validInfo = false) {
+                console.log("Some of the information you entered was invalid!");
+                console.log("All invalid inputs: " + problems);
+                console.log("Please try again with valid inputs.");
+                rmEmployee();
+            }
+            //IF VALIDITY TEST IS PASSED, INSERT USER INPUTS TO DB
+            else {
+                dbConnection.query(
+                    `DELETE FROM employees_DB.employee
+                     WHERE first_name = "${firstName}" AND last_name = "${lastName}"`
+                ), 
+                function(err) {
+                    if (err) throw err;
+                    "Employee removed, returning hone."
+                    queryUser();
+                }
+            }
+        })
+    ])
 }
 
 function rmRole() {
+    inquirer.prompt([
+        {
+            name: "role",
+            type: "input",
+            message: "Enter the role title you wish to remove"
+        }
+        .then(function(res) {
+            const role = res.role;
+            var problems = [];
 
+            //TEST RESPONSE VALIDITY
+            var validInfo = true;
+            if (role !== "" || typeof(role) !== "string") {
+                validInfo = false;
+                problems.push(role);
+            }
+            //ALERT USER OF ANY INVALID INPUTS AND LOG WHICH INPUTS FAILED VALIDITY TEST
+            if (validInfo = false) {
+                console.log("Some of the information you entered was invalid!");
+                console.log("All invalid inputs: " + problems);
+                console.log("Please try again with valid inputs.");
+                rmRole();
+            }
+            //IF VALIDITY TEST IS PASSED, INSERT USER INPUTS TO DB
+            else {
+                dbConnection.query(
+                    `DELETE FROM employees_DB.role
+                     WHERE title = "${role}"`
+                ), 
+                function(err) {
+                    if (err) throw err;
+                    "Role removed, returning hone."
+                    queryUser();
+                }
+            }
+        })
+    ])
 }
 
 function rmDepartment() {
+    inquirer.prompt([
+        {
+            name: "department",
+            type: "input",
+            message: "Enter the department you wish to remove"
+        }
+        .then(function(res) {
+            const department = res.department;
+            var problems = [];
 
+            //TEST RESPONSE VALIDITY
+            var validInfo = true;
+            if (department !== "" || typeof(department) !== "string") {
+                validInfo = false;
+                problems.push(department);
+            }
+            //ALERT USER OF ANY INVALID INPUTS AND LOG WHICH INPUTS FAILED VALIDITY TEST
+            if (validInfo = false) {
+                console.log("Some of the information you entered was invalid!");
+                console.log("All invalid inputs: " + problems);
+                console.log("Please try again with valid inputs.");
+                rmDepartment();
+            }
+            //IF VALIDITY TEST IS PASSED, INSERT USER INPUTS TO DB
+            else {
+                dbConnection.query(
+                    `DELETE FROM employees_DB.department
+                     WHERE name = "${department}"`
+                ), 
+                function(err) {
+                    if (err) throw err;
+                    "Department removed, returning hone."
+                    queryUser();
+                }
+            }
+        })
+    ])
 }
 
 function allEmployees() {
