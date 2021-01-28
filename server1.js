@@ -103,3 +103,224 @@ function queryUser() {
         }
     })
 }
+
+function addEmployee() {
+    inquirer.prompt([
+        {
+            name: "firstName",
+            type: "input",
+            message: "Enter employee's first name"
+        },
+        {
+            name: "lastName",
+            type: "input",
+            message: "Enter employee's last name"
+        },
+        {
+            name: "roleID",
+            type: "input",
+            message: "Enter employee's role id"
+        },
+        {
+            name: "managerID",
+            type: "input",
+            message: "Enter employee's manager's id"
+        }
+    ])
+    .then(function(res) {
+        //SET EACH USER RESPONSE TO MORE READABLE CONST
+        const firstName = res.firstName;
+        const lastName = res.lastName;
+        const roleID = res.roleID;
+        const managerID = res.managerID;
+        var problems = [];
+
+        //TEST RESPONSE VALIDITY
+        var validInfo = true;
+        if (firstName !== "" || typeof(firstName) !== "string") {
+            validInfo = false;
+            problems.push(firstName);
+        }
+        if (lastName !== "" || typeof(lastName) !== "string") {
+            validInfo = false;
+            problems.push(lastName);
+        }
+        if (roleID !== "" || typeof(roleID) !== "number") {
+            validInfo = false;
+            problems.push(roleID);
+        }
+        if (managerID !== "" || typeof(managerID) !== "number") {
+            validInfo = false;
+            problems.push(managerID);
+        }
+
+        //ALERT USER OF ANY INVALID INPUTS AND LOG WHICH INPUTS FAILED VALIDITY TEST
+        if (validInfo = false) {
+            console.log("Some of the information you entered was invalid!");
+            console.log("All invalid inputs: " + problems);
+            console.log("Please try again with valid inputs.");
+            addEmployee();
+        }
+        //IF VALIDITY TEST IS PASSED, INSERT USER INPUTS TO DB
+        else {
+            dbConnection.query(
+                `INSERT INTO employee (first_name, last_name, role_id, manager_id)
+                 VALUES ("${firstName}", "${lastName}", "${roleID}", "${managerID}")`
+            ), 
+            function(err) {
+                if (err) throw err;
+                "Employee added, returning hone."
+                queryUser();
+            }
+        }
+    });
+}
+
+function addRole() {
+    inquirer.prompt([
+        {
+            name: "role",
+            type: "input",
+            message: "Enter role title"
+        },
+        {
+            name: "salary",
+            type: "input",
+            message: "Enter role salary"
+        },
+        {
+            name: "departmentID",
+            type: "input",
+            message: "Enter role's department id"
+        }
+    ])
+    .then(function(res) {
+        //SET EACH USER RESPONSE TO MORE READABLE CONST
+        const role = res.role;
+        const salary = res.salary;
+        const departmentID = res.departmentID;
+        var problems = [];
+
+        //TEST RESPONSE VALIDITY
+        var validInfo = true;
+        if (role !== "" || typeof(role) !== "string") {
+            validInfo = false;
+            problems.push(role);
+        }
+        if (salary !== "" || typeof(salary) !== "number") {
+            validInfo = false;
+            problems.push(salary);
+        }
+        if (departmentID !== "" || typeof(departmentID) !== "number") {
+            validInfo = false;
+            problems.push(departmentID);
+        }
+
+        //ALERT USER OF ANY INVALID INPUTS AND LOG WHICH INPUTS FAILED VALIDITY TEST
+        if (validInfo = false) {
+            console.log("Some of the information you entered was invalid!");
+            console.log("All invalid inputs: " + problems);
+            console.log("Please try again with valid inputs.");
+            addRole();
+        }
+        //IF VALIDITY TEST IS PASSED, INSERT USER INPUTS TO DB
+        else {
+            dbConnection.query(
+                `INSERT INTO role (title, salary, department_id)
+                 VALUES ("${role}", "${salary}", "${departmentID}")`
+            ), 
+            function(err) {
+                if (err) throw err;
+                "Role added, returning home."
+                queryUser();
+            }
+        }
+    });
+}
+
+
+function addDepartment() {
+    inquirer.prompt([
+        {
+            name: "department",
+            type: "input",
+            message: "Enter department name"
+        }
+    ])
+    .then(function(res) {
+        //SET EACH USER RESPONSE TO MORE READABLE CONST
+        const department = res.department;
+        var problems = [];
+
+        //TEST RESPONSE VALIDITY
+        var validInfo = true;
+        if (department !== "" || typeof(department) !== "string") {
+            validInfo = false;
+            problems.push(role);
+        }
+
+        //ALERT USER OF ANY INVALID INPUTS AND LOG WHICH INPUTS FAILED VALIDITY TEST
+        if (validInfo = false) {
+            console.log("Some of the information you entered was invalid!");
+            console.log("All invalid inputs: " + problems);
+            console.log("Please try again with valid inputs.");
+            addDepartment();
+        }
+        //IF VALIDITY TEST IS PASSED, INSERT USER INPUTS TO DB
+        else {
+            dbConnection.query(
+                `INSERT INTO department (name)
+                 VALUE ("${department}")`
+            ), 
+            function(err) {
+                if (err) throw err;
+                "Department added, returning home."
+                queryUser();
+            }
+        }
+    });
+}
+
+function rmEmployee() {
+
+}
+
+function rmRole() {
+
+}
+
+function rmDepartment() {
+
+}
+
+function allEmployees() {
+
+}
+
+function departmentEmployees() {
+
+}
+
+function roleEmployees() {
+
+}
+
+function managerEmployees() {
+
+}
+
+function setEmployeeName() {
+
+}
+
+function setEmployeeName() {
+
+}
+
+function setEmployeeJob() {
+
+}
+
+function setEmployeeDepartment() {
+
+}
