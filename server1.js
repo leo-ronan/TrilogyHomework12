@@ -2,6 +2,7 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
 const { registerPrompt } = require("inquirer");
+const consoleTable = require("console.table");
 
 //SET DATABASE TO BE USED, CREDENTIALS NEEDED, AND HOST/PORT
 const dbConnection = mysql.createConnection({
@@ -33,11 +34,6 @@ function queryUser() {
             "Remove job role",
             "Remove department",
             "Display all employees",
-            "Display employees by department",
-            "Display employees by job role",
-            "Display employees by assigned manager",
-            "Change an employee's name",
-            "Change an employee's job role",
             "Change an employee's department",
             "End program"
         ]
@@ -73,28 +69,16 @@ function queryUser() {
                 allEmployees();
             break;
 
-            case "Display employees by department":
-                departmentEmployees();
+            case "Display a department's employees":
+                allDepartmentEmployees();
             break;
 
-            case "Display employees by job role":
-                roleEmployees();
+            case "Display all employees with a certain role":
+                allRoleEmployees();
             break;
 
-            case "Display employees by assigned manager":
-                managerEmployees();
-            break;
-
-            case "Change an employee's name":
-                setEmployeeName();
-            break;
-
-            case "Change an employee's job role":
-                setEmployeeJob();
-            break;
-            
-            case "Change an employee's department":
-                setEmployeeDepartment();
+            case "Change an employee's role":
+                setEmployeeRole();
             break;
 
             case "End program":
@@ -161,11 +145,11 @@ function addEmployee() {
             console.log("Please try again with valid inputs.");
             addEmployee();
         }
-        //IF VALIDITY TEST IS PASSED, INSERT USER INPUTS TO DB
+        //IF VALIDITY TEST IS PASSED
         else {
             dbConnection.query(
                 `INSERT INTO employee (first_name, last_name, role_id, manager_id)
-                 VALUES ("${firstName}", "${lastName}", "${roleID}", "${managerID}")`
+                 VALUES ("${firstName}", "${lastName}", ${roleID}, ${managerID})`
             ), 
             function(err) {
                 if (err) throw err;
@@ -223,11 +207,11 @@ function addRole() {
             console.log("Please try again with valid inputs.");
             addRole();
         }
-        //IF VALIDITY TEST IS PASSED, INSERT USER INPUTS TO DB
+        //IF VALIDITY TEST IS PASSED
         else {
             dbConnection.query(
                 `INSERT INTO role (title, salary, department_id)
-                 VALUES ("${role}", "${salary}", "${departmentID}")`
+                 VALUES ("${role}", ${salary}, ${departmentID})`
             ), 
             function(err) {
                 if (err) throw err;
@@ -237,7 +221,6 @@ function addRole() {
         }
     });
 }
-
 
 function addDepartment() {
     inquirer.prompt([
@@ -266,7 +249,7 @@ function addDepartment() {
             console.log("Please try again with valid inputs.");
             addDepartment();
         }
-        //IF VALIDITY TEST IS PASSED, INSERT USER INPUTS TO DB
+        //IF VALIDITY TEST IS PASSED
         else {
             dbConnection.query(
                 `INSERT INTO department (name)
@@ -316,10 +299,10 @@ function rmEmployee() {
                 console.log("Please try again with valid inputs.");
                 rmEmployee();
             }
-            //IF VALIDITY TEST IS PASSED, INSERT USER INPUTS TO DB
+            //IF VALIDITY TEST IS PASSED
             else {
                 dbConnection.query(
-                    `DELETE FROM employees_DB.employee
+                    `DELETE FROM employee
                      WHERE first_name = "${firstName}" AND last_name = "${lastName}"`
                 ), 
                 function(err) {
@@ -356,10 +339,10 @@ function rmRole() {
                 console.log("Please try again with valid inputs.");
                 rmRole();
             }
-            //IF VALIDITY TEST IS PASSED, INSERT USER INPUTS TO DB
+            //IF VALIDITY TEST IS PASSED
             else {
                 dbConnection.query(
-                    `DELETE FROM employees_DB.role
+                    `DELETE FROM role
                      WHERE title = "${role}"`
                 ), 
                 function(err) {
@@ -396,15 +379,15 @@ function rmDepartment() {
                 console.log("Please try again with valid inputs.");
                 rmDepartment();
             }
-            //IF VALIDITY TEST IS PASSED, INSERT USER INPUTS TO DB
+            //IF VALIDITY TEST IS PASSED
             else {
                 dbConnection.query(
-                    `DELETE FROM employees_DB.department
+                    `DELETE FROM department
                      WHERE name = "${department}"`
                 ), 
                 function(err) {
                     if (err) throw err;
-                    "Department removed, returning hone."
+                    "Department removed, returning home."
                     queryUser();
                 }
             }
@@ -413,33 +396,119 @@ function rmDepartment() {
 }
 
 function allEmployees() {
-
+    //GET ALL EMPLOYEES AND DISPLAY WITH CONSOLE TABLE TO FORMAT
+    dbConnection.query(
+        "SELECT * FROM employee",
+        function(res) {
+            console.table(res);
+            queryUser;
+        }
+    )
 }
 
-function departmentEmployees() {
+function allRoleEmployees() {
+    //GET ALL EMPLOYEES FROM REQUESTED ROLE AND DISPLAY WITH CONSOLE TABLE TO FORMAT
+    inquirer.prompt([
+        {
+            name: "role",
+            type: "input",
+            message: "Enter role name"
+        }
+    ])
+    .then(function(res) {
+        const role = res.role;
+        var problems = [];
 
+        //TEST RESPONSE VALIDITY
+        var validInfo = true;
+        if (role !== "" || typeof(role) !== "string") {
+            validInfo = false;
+            problems.push(role);
+        }
+        //ALERT USER OF ANY INVALID INPUTS AND LOG WHICH INPUTS FAILED VALIDITY TEST
+        if (validInfo = false) {
+            console.log("Some of the information you entered was invalid!");
+            console.log("All invalid inputs: " + problems);
+            console.log("Please try again with valid inputs.");
+            allRoles();
+        }
+        else {
+            dbConnection.query(
+                `SELECT * FROM role WHERE title = "${role}"`,
+                function(res) {
+                    console.table(res);
+                    queryUser();
+                }
+            )
+        }
+    });
 }
 
-function roleEmployees() {
+function allDepartmentEmployees() {
+    //GET ALL EMPLOYEES FROM REQUESTED DEPARTMENT AND DISPLAY WITH CONSOLE TABLE TO FORMAT
+    inquirer.prompt([
+        {
+            name: "department",
+            type: "input",
+            message: "Enter department name"
+        }
+    ])
+    .then(function(res) {
+        const department = res.department;
+        var problems = [];
 
+        //TEST RESPONSE VALIDITY
+        var validInfo = true;
+        if (department !== "" || typeof(department) !== "string") {
+            validInfo = false;
+            problems.push(department);
+        }
+        //ALERT USER OF ANY INVALID INPUTS AND LOG WHICH INPUTS FAILED VALIDITY TEST
+        if (validInfo = false) {
+            console.log("Some of the information you entered was invalid!");
+            console.log("All invalid inputs: " + problems);
+            console.log("Please try again with valid inputs.");
+            allDepartments();
+        }
+        else {
+            dbConnection.query(
+                `SELECT * FROM department WHERE name = "${department}"`,
+                function(res) {
+                    console.table(res);
+                    queryUser();
+                }
+            )
+        }
+    });  
 }
 
-function managerEmployees() {
-
-}
-
-function setEmployeeName() {
-
-}
-
-function setEmployeeName() {
-
-}
-
-function setEmployeeJob() {
-
-}
-
-function setEmployeeDepartment() {
-
+function setEmployeeRole() {
+    inquirer.prompt([
+        {
+            name: "firstName",
+            type: "input",
+            message: "Enter employee's first name"
+        },        
+        {
+            name: "lastName",
+            type: "input",
+            message: "Enter employee's last name"
+        },
+        {
+            name: "roleID",
+            type: "input",
+            message: "Enter employee's new role ID"
+        }
+    ])
+    .then(function(res) {
+        const firstName = res.firstName;
+        const lastName = res.lastName;
+        const roleID = res.role;
+        dbConnection.query(
+            `UPDATE employee 
+             SET role_id = ${roleID} 
+             WHERE first_name = "${firstName}" 
+             AND last_name = "${lastName}"`
+        )
+    })
 }

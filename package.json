@@ -1,8 +1,8 @@
 {
   "name": "mysql",
   "version": "1.0.0",
-  "description": "Homework 12",
-  "main": "index.js",
+  "description": "mySQL Homework 12",
+  "main": "server1.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
